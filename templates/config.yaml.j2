@@ -1,8 +1,8 @@
 pki:
   # The CAs that are accepted by this node. Must contain one or more certificates created by 'nebula-cert ca'
-  ca: {{ ca }}
-  cert: {{ cert }}
-  key: {{ key }}
+  ca: {{ pki.ca }}
+  cert: {{ pki.cert }}
+  key: {{ pki.key }}
 {% if blocklist is defined %}
   blocklist:
   {% for hash in blocklist %}
