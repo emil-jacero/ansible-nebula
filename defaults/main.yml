@@ -15,11 +15,13 @@ punchy: true
 punch_back: true
 
 outbound:
-  - port: any
+  - comment: Allow all outbound traffic from this node
+    port: any
     proto: any
     host: any
 
 inbound:
-  - port: any
+  - comment: "Allow all inbound ICMP"
+    port: any
     proto: icmp
     host: any

@@ -73,8 +73,8 @@ routes:
     #  route: 10.0.0.0/16
 
 logging:
-  level: info
-  format: text
+  level: {{ logging.level | default("info") }}
+  format: {{ logging.format | default("text") }}
 
 #stats:
 #  type: prometheus
@@ -93,12 +93,13 @@ firewall:
     max_connections: 100000
 
   outbound:
-    # Allow all outbound traffic from this node
-{% for rule in outbound %}
-    - port: "{{ rule.port }}"
-      proto: "{{ rule.proto }}"
-      {% if rule.host is defined %}host: "{{ rule.host }}"
-      {% elif rule.group is defined %}group: "{{ rule.group }}"
+  {% for rule in outbound %}
+  {% if rule.comment is defined %}# {{ rule.comment }}{% endif %}
+
+    - port: {{ rule.port }}
+      proto: {{ rule.proto }}
+      {% if rule.host is defined %}host: {{ rule.host }}
+      {% elif rule.group is defined %}group: {{ rule.group }}
       {% elif rule.groups is defined %}groups:
         {% for group in rule.groups %}
         - {{ group }}
@@ -106,22 +107,23 @@ firewall:
       {% elif rule.cidr is defined %}cidr: {{ rule.cidr }}
       {% else %}
       host: any
-      {% endif %}
-{% endfor %}
+  {% endif %}
 
+  {% endfor %}
 
   inbound:
-{% for rule in inbound %}
-    - port: "{{ rule.port }}"
-      proto: "{{ rule.proto }}"
-      {% if rule.host is defined %}host: "{{ rule.host }}"
-      {% elif rule.group is defined %}group: "{{ rule.group }}"
+  {% for rule in inbound %}
+  {% if rule.comment is defined %}# {{ rule.comment }}{% endif %}
+
+    - port: {{ rule.port }}
+      proto: {{ rule.proto }}
+      {% if rule.host is defined %}host: {{ rule.host }}
+      {% elif rule.group is defined %}group: {{ rule.group }}
       {% elif rule.groups is defined %}groups:
-        {% for group in rule.groups %}
-        - {{ group }}
-        {% endfor %}
+        {% for group in rule.groups %}- {{ group }}{% endfor %}
       {% elif rule.cidr is defined %}cidr: {{ rule.cidr }}
       {% else %}
       host: any
-      {% endif %}
-{% endfor %}
+  {% endif %}
+
+  {% endfor %}
